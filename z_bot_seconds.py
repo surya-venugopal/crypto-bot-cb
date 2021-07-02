@@ -28,7 +28,8 @@ class bot:
         self.products = ["ADA-USD"]
 
         self.initialAmount = 1000.0
-        self.currentAmount = self.initialAmount
+        self.currentAmount = 1000.0
+        self.previousAmount = 1000.0
         self.currentCrypto = 0.0
         
         self.isBought = False
@@ -93,23 +94,23 @@ class bot:
                 self.MAc += currentPrice
             
             if self.queuea.size() == self.a:
-                if(self.MAc/self.c > self.MAa/self.a):
-                    if(not self.isBought):
-                        self.buy(currentPrice,currentTime)
-                        self.isBought = True
-                elif(self.MAc/self.c < self.MAa/self.a):
-                    if(self.isBought):
-                        self.sell(currentPrice,currentTime)
-                        self.isBought = False
-                elif(self.MAb/self.b > self.MAc/self.c and (self.MAb/self.b > self.MAa/self.a and self.MAc/self.c > self.MAa/self.a)):
-                    if(self.isBought):
-                        self.sell(currentPrice,currentTime)
-                        self.isBought = False
-                elif(self.MAb/self.b < self.MAc/self.c and (self.MAb/self.b > self.MAa/self.a and self.MAc/self.c > self.MAa/self.a)):
-                    if(not self.isBought):
-                        self.buy(currentPrice,currentTime)
-                        self.isBought = True
-                else : pass
+                    if(self.MAc/self.c > self.MAa/self.a):
+                        if(self.MAb/self.b > self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a)):
+                            if(self.isBought):
+                                self.sell(currentPrice,currentTime)
+                                self.isBought = False
+                        elif(self.MAb/self.b < self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a) ): #and (self.MAc/self.c - self.MAb/self.b)>currentPrice*0.5/100
+                            if(not self.isBought):
+                                self.buy(currentPrice,currentTime)
+                                self.isBought = True
+                        elif(not self.isBought):
+                            self.buy(currentPrice,currentTime)
+                            self.isBought = True
+                    elif(self.MAc/self.c < self.MAa/self.a):
+                        if(self.isBought):
+                            self.sell(currentPrice,currentTime)
+                            self.isBought = False
+                    else : pass
             
 
             # self.sum1min = 0
@@ -128,6 +129,7 @@ class bot:
 
 
     def buy(self,price,time):
+        print("------{}".format(self.currentAmount))
         self.currentCrypto = self.currentAmount / price
         self.currentAmount = 0.0
         print("\n#################################################################################################################\n")
@@ -138,10 +140,11 @@ class bot:
         self.currentAmount = price * self.currentCrypto
         self.currentCrypto = 0.0
         print("\nSELL")
-        print("{} : current price {}$, current crypto : {},  current amount : {}$, profit : {}$ ({})"
-        .format(time,price,self.currentCrypto,self.currentAmount,self.currentAmount-self.initialAmount,(self.currentAmount - self.initialAmount)* 100/self.initialAmount))
+        print("{} : current price {}$, current crypto : {},  current amount : {}$, trade profit : {}$ ({}%), total profit : {}$ ({}%)"
+        .format(time,price,self.currentCrypto,self.currentAmount
+        ,self.currentAmount-self.previousAmount,(self.currentAmount - self.previousAmount)* 100/self.previousAmount
+        ,self.currentAmount-self.initialAmount,(self.currentAmount - self.initialAmount)* 100/self.initialAmount))
         print("\n#################################################################################################################\n")
-
 
 coin = sys.argv[1]
 if(coin != None):
