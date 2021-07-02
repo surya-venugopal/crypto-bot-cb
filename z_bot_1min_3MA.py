@@ -131,7 +131,7 @@ class bot:
 
 
     def buy(self,price,time):
-        print("------{}".format(self.currentAmount))
+        
         self.previousAmount = self.currentAmount
         self.currentCrypto = self.currentAmount / price
         
