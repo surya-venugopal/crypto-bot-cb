@@ -110,9 +110,9 @@ class bot:
                             self.sell(currentPrice,currentTime)
                             self.isBought = False
                     else : pass
-                print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}"
-                .format(coin,currentTime,currentPrice,self.currentCrypto,self.currentAmount,self.MAa/self.a,self.MAb/self.b,self.MAc/self.c))
-
+                print("{} : {} : current price {}$, current crypto : {},  current amount : {}$"
+                .format(coin,currentTime,currentPrice,self.currentCrypto,self.currentAmount))
+                
                 self.sum1min = 0
                 self.i = 0
                 

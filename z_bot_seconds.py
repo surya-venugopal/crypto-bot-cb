@@ -64,8 +64,8 @@ class bot:
         if(self.previousTime != "" and currentTime != self.previousTime):
 
             if(currentTime[3:5] != self.previousTime[3:5]):
-                print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}"
-                .format(coin,currentTime,currentPrice,self.currentCrypto,self.currentAmount,self.MAa/self.a,self.MAb/self.b,self.MAc/self.c))
+                print("{} : {} : current price {}$, current crypto : {},  current amount : {}$"
+                .format(coin,currentTime,currentPrice,self.currentCrypto,self.currentAmount))
                 
             if self.queuea.size() < self.a:
                 self.queuea.enqueue([currentPrice,currentTime])
