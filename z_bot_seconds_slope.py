@@ -18,15 +18,16 @@ class Queue:
         return len(self.queue)
     
     def slope(self):
-        # sum1 = 0
-        # sum2 = 0
-        # for i in range(5):
-        #     sum1 += self.queue[i]
-        # for i in range(5,10):
-        #     sum2 += self.queue[i]
-        # print(sum2/5,sum1/5)
-        # return math.degrees(math.atan((sum2/5)-(sum1/5)))
-        return math.degrees(math.atan(self.queue[self.size()-1]-self.queue[self.size()-2]))
+        sum1 = 0
+        sum2 = 0
+        n=2
+        for i in range(self.size()-n,self.size()-2*n ,-1):
+            sum1 += self.queue[i-1]
+        for i in range(self.size(),self.size()-n):
+            sum2 += self.queue[i-1]
+        print(sum2/n,sum1/n)
+        return math.degrees(math.atan((sum2/n)-(sum1/n)))
+        # return math.degrees(math.atan(self.queue[self.size()-1]-self.queue[self.size()-2]))
 
 
 key = "2c6d3a1b53d5a2d31676254b3373db8d"
@@ -47,9 +48,9 @@ class bot:
         
         self.isBought = False
 
-        self.a = 21 * 20 
-        self.b = 9 * 20
-        self.c = 5 * 20
+        self.a = 21 * 30 
+        self.b =  9 * 30
+        self.c =  5 * 30
         self.queuea = Queue()
         self.queueb = Queue()
         self.queuec = Queue()
@@ -79,7 +80,7 @@ class bot:
         if(self.previousTime != None and currentTime != self.previousTime):
 
             # if(self.i!=0):
-            if(currentTime.minute != self.previousTime.minute):
+            if(currentTime.minute %2 == 0 and currentTime.minute != self.previousTime.minute):
             # if(True):
                 try:
                     print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}, slope21 : {}, slope9 : {}, slope5 : {}"
@@ -133,23 +134,28 @@ class bot:
                             if(self.isBought):
                                 self.sell(currentPrice,currentTime)
                                 self.isBought = False
+                                print("@@@@@@ 1")
                         elif(self.MAb/self.b < self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a) and self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0): #and (self.MAc/self.c - self.MAb/self.b)>currentPrice*0.5/100
                             if(not self.isBought):
                                 self.buy(currentPrice,currentTime)
                                 self.isBought = True
+                                print("@@@@@@ 2")
                         else:
                             if(self.queueMAa.slope() > 0.0 ):
                                 if(not self.isBought):
                                     self.buy(currentPrice,currentTime)
                                     self.isBought = True
+                                    print("@@@@@@ 3")
                             elif(self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0 ):
                                 if(not self.isBought):
                                     self.buy(currentPrice,currentTime)
                                     self.isBought = True
+                                    print("@@@@@@ 4")
                     elif(self.MAc/self.c < self.MAa/self.a):
                         if(self.isBought):
                             self.sell(currentPrice,currentTime)
                             self.isBought = False
+                            print("@@@@@@ 5")
                     else : pass
                 
                 
@@ -185,15 +191,23 @@ class bot:
         self.currentAmount = 0.0
         print("\n#################################################################################################################\n")
         print("BUY")
+        print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}, slope21 : {}, slope9 : {}, slope5 : {}"
+                    .format(coin,time,price,round(self.currentCrypto,2),round(self.currentAmount,2),
+                    round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2),
+                    round(self.queueMAa.slope(),2),round(self.queueMAb.slope(),2),round(self.queueMAc.slope(),2)))
 
     def sell(self,price,time):
         self.currentAmount = price * self.currentCrypto
         self.currentCrypto = 0.0
         print("\nSELL")
-        print("{} : current price {}$,  current amount : {}$, trade profit : {}$ ({}%), total profit : {}$ ({}%)"
-        .format(time,price,round(self.currentAmount,2)
-        ,round(self.currentAmount-self.previousAmount,2),round((self.currentAmount - self.previousAmount)* 100/self.previousAmount,2)
-        ,round(self.currentAmount-self.initialAmount,2),round((self.currentAmount - self.initialAmount)* 100/self.initialAmount)),2)
+        print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}, slope21 : {}, slope9 : {}, slope5 : {}"
+                    .format(coin,time,price,round(self.currentCrypto,2),round(self.currentAmount,2),
+                    round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2),
+                    round(self.queueMAa.slope(),2),round(self.queueMAb.slope(),2),round(self.queueMAc.slope(),2)))
+        
+        print("trade profit : {}$ ({}%), total profit : {}$ ({}%)"
+        .format(round(self.currentAmount-self.previousAmount,2),round((self.currentAmount - self.previousAmount)* 100/self.previousAmount,2)
+        ,round(self.currentAmount-self.initialAmount,2),round((self.currentAmount - self.initialAmount)* 100/self.initialAmount,2)))
         print("\n#################################################################################################################\n")
         # auth_client.sell(size=str(self.currentCrypto), 
         #        order_type='market',
