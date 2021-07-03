@@ -18,14 +18,15 @@ class Queue:
         return len(self.queue)
     
     def slope(self):
-        sum1 = 0
-        sum2 = 0
-        for i in range(5):
-            sum1 += self.queue[i]
-        for i in range(5,10):
-            sum2 += self.queue[i]
-        print(sum2/5,sum1/5)
-        return math.degrees(math.atan((sum2/5)-(sum1/5)))
+        # sum1 = 0
+        # sum2 = 0
+        # for i in range(5):
+        #     sum1 += self.queue[i]
+        # for i in range(5,10):
+        #     sum2 += self.queue[i]
+        # print(sum2/5,sum1/5)
+        # return math.degrees(math.atan((sum2/5)-(sum1/5)))
+        return math.degrees(math.atan(self.queue[self.size()-1]-self.queue[self.size()-2]))
 
 
 key = "2c6d3a1b53d5a2d31676254b3373db8d"
@@ -77,91 +78,91 @@ class bot:
         
         if(self.previousTime != None and currentTime != self.previousTime):
 
-            if(self.i!=0):
-                # if(currentTime.minute != self.previousTime.minute):
-                if(True):
-                    try:
-                        print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}, slope21 : {}, slope9 : {}, slope5 : {}"
-                        .format(coin,currentTime,currentPrice,round(self.currentCrypto,2),round(self.currentAmount,2),
-                        round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2),
-                        round(self.queueMAa.slope(),2),round(self.queueMAb.slope(),2),round(self.queueMAc.slope(),2)))
-                        # print(self.queueMAa.queue)
-                        # print(self.queuec.queue)
-                    except:
-                        print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}"
-                        .format(coin,currentTime,currentPrice,self.currentCrypto,round(self.currentAmount,2),round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2)))
-                if self.queuea.size() < self.a:
-                    self.queuea.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAa += self.sum1min/self.i
-                else:
-                    self.MAa -= self.queuea.dequeue()[0]
-                    self.queuea.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAa += self.sum1min/self.i
+            # if(self.i!=0):
+            if(currentTime.minute != self.previousTime.minute):
+            # if(True):
+                try:
+                    print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}, slope21 : {}, slope9 : {}, slope5 : {}"
+                    .format(coin,currentTime,currentPrice,round(self.currentCrypto,2),round(self.currentAmount,2),
+                    round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2),
+                    round(self.queueMAa.slope(),2),round(self.queueMAb.slope(),2),round(self.queueMAc.slope(),2)))
+                    # print(self.queueMAa.queue)
+                    # print(self.queuec.queue)
+                except:
+                    print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}"
+                    .format(coin,currentTime,currentPrice,self.currentCrypto,round(self.currentAmount,2),round(self.MAa/self.a,2),round(self.MAb/self.b,2),round(self.MAc/self.c,2)))
+            if self.queuea.size() < self.a:
+                self.queuea.enqueue([currentPrice,currentTime])
+                self.MAa += currentPrice
+            else:
+                self.MAa -= self.queuea.dequeue()[0]
+                self.queuea.enqueue([currentPrice,currentTime])
+                self.MAa += currentPrice
 
-                if self.queueb.size() < self.b:
-                    self.queueb.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAb += self.sum1min/self.i
-                else:
-                    
-                    self.MAb -= self.queueb.dequeue()[0]
-                    self.queueb.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAb += self.sum1min/self.i
-
-                if self.queuec.size() < self.c:
-                    self.queuec.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAc += self.sum1min/self.i
-                else:
-                    self.MAc -= self.queuec.dequeue()[0]
-                    self.queuec.enqueue([self.sum1min/self.i,currentTime])
-                    self.MAc += self.sum1min/self.i
+            if self.queueb.size() < self.b:
+                self.queueb.enqueue([currentPrice,currentTime])
+                self.MAb += currentPrice
+            else:
                 
-                if self.queuea.size() == self.a:
-                    if self.queueMAa.size() < 10:
-                        self.queueMAa.enqueue(self.MAa/self.a)
-                        self.queueMAb.enqueue(self.MAb/self.b)
-                        self.queueMAc.enqueue(self.MAc/self.c)
-                    else:
-                        self.queueMAa.dequeue()
-                        self.queueMAa.enqueue(self.MAa/self.a)
-                        self.queueMAb.dequeue()
-                        self.queueMAb.enqueue(self.MAb/self.b)
-                        self.queueMAc.dequeue()
-                        self.queueMAc.enqueue(self.MAc/self.c)
-                        if(self.MAc/self.c > self.MAa/self.a):
-                            if(self.MAb/self.b > self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a)):
-                                if(self.isBought):
-                                    self.sell(currentPrice,currentTime)
-                                    self.isBought = False
-                            elif(self.MAb/self.b < self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a) and self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0): #and (self.MAc/self.c - self.MAb/self.b)>currentPrice*0.5/100
-                                if(not self.isBought):
-                                    self.buy(currentPrice,currentTime)
-                                    self.isBought = True
-                            else:
-                                if(self.queueMAa.slope() > 0.0 ):
-                                    if(not self.isBought):
-                                        self.buy(currentPrice,currentTime)
-                                        self.isBought = True
-                                elif(self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0 ):
-                                    if(not self.isBought):
-                                        self.buy(currentPrice,currentTime)
-                                        self.isBought = True
-                        elif(self.MAc/self.c < self.MAa/self.a):
+                self.MAb -= self.queueb.dequeue()[0]
+                self.queueb.enqueue([currentPrice,currentTime])
+                self.MAb += currentPrice
+
+            if self.queuec.size() < self.c:
+                self.queuec.enqueue([currentPrice,currentTime])
+                self.MAc += currentPrice
+            else:
+                self.MAc -= self.queuec.dequeue()[0]
+                self.queuec.enqueue([currentPrice,currentTime])
+                self.MAc += currentPrice
+            
+            if self.queuea.size() == self.a:
+                if self.queueMAa.size() < 10:
+                    self.queueMAa.enqueue(self.MAa/self.a)
+                    self.queueMAb.enqueue(self.MAb/self.b)
+                    self.queueMAc.enqueue(self.MAc/self.c)
+                else:
+                    self.queueMAa.dequeue()
+                    self.queueMAa.enqueue(self.MAa/self.a)
+                    self.queueMAb.dequeue()
+                    self.queueMAb.enqueue(self.MAb/self.b)
+                    self.queueMAc.dequeue()
+                    self.queueMAc.enqueue(self.MAc/self.c)
+                    if(self.MAc/self.c > self.MAa/self.a):
+                        if(self.MAb/self.b > self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a)):
                             if(self.isBought):
                                 self.sell(currentPrice,currentTime)
                                 self.isBought = False
-                        else : pass
+                        elif(self.MAb/self.b < self.MAc/self.c and (self.MAc/self.c > self.MAa/self.a and self.MAb/self.b > self.MAa/self.a) and self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0): #and (self.MAc/self.c - self.MAb/self.b)>currentPrice*0.5/100
+                            if(not self.isBought):
+                                self.buy(currentPrice,currentTime)
+                                self.isBought = True
+                        else:
+                            if(self.queueMAa.slope() > 0.0 ):
+                                if(not self.isBought):
+                                    self.buy(currentPrice,currentTime)
+                                    self.isBought = True
+                            elif(self.queueMAb.slope() > 30.0 and self.queueMAc.slope() > 30.0 ):
+                                if(not self.isBought):
+                                    self.buy(currentPrice,currentTime)
+                                    self.isBought = True
+                    elif(self.MAc/self.c < self.MAa/self.a):
+                        if(self.isBought):
+                            self.sell(currentPrice,currentTime)
+                            self.isBought = False
+                    else : pass
                 
                 
 
                 # print("{} : {} : current price {}$, current crypto : {},  current amount : {}$, MA21 : {}, MA9 : {}, MA5 : {}"
                 # .format(coin,currentTime,currentPrice,self.currentCrypto,self.currentAmount,self.MAa/self.a,self.MAb/self.b,self.MAc/self.c))
 
-                self.sum1min = 0
-                self.i = 0
+                # self.sum1min = 0
+                # self.i = 0
                 
-            else:
-                self.i += 1
-                self.sum1min += currentPrice
+            # else:
+            #     self.i += 1
+            #     self.sum1min += currentPrice
                 
             self.previousTime = currentTime
         else: 
